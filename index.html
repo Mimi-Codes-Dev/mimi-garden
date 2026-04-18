@@ -238,12 +238,13 @@
 
         async function loadKnowledge() {
             try {
-                const response = await fetch('knowledge.json');
+                const response = await fetch(`knowledge.json?t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 knowledgeBase = await response.json();
                 renderKnowledge();
             } catch (error) {
                 console.error('Failed to load knowledge:', error);
-                document.getElementById('knowledge-grid').innerHTML = '<p style="text-align:center; width:100%;"> Oops! 知識種子暫時無法載入 🦐💦</p>';
+                document.getElementById('knowledge-grid').innerHTML = `<p style="text-align:center; width:100%;"> Oops! 知識種子暫時無法載入 🦐💦<br><small style="color:#999">${error.message}</small></p>`;
             }
         }
 
@@ -252,7 +253,9 @@
             card.className = 'knowledge-card';
             card.onclick = () => openModal(item.id);
             
-            const tagsHtml = item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('');
+            // Fallback for old 'category' field
+            const tags = item.tags || (item.category ? [item.category] : ['Uncategorized']);
+            const tagsHtml = tags.map(tag => `<span class="card-tag">${tag}</span>`).join('');
             
             card.innerHTML = `
                 <div class="tag-container">${tagsHtml}</div>
@@ -291,7 +294,9 @@
             const item = knowledgeBase.find(k => k.id === id);
             const body = document.getElementById('modal-body');
             
-            const tagsHtml = item.tags.map(tag => `<span class="card-tag" style="margin-right:5px">${tag}</span>`).join('');
+            // Fallback for old 'category' field
+            const tags = item.tags || (item.category ? [item.category] : ['Uncategorized']);
+            const tagsHtml = tags.map(tag => `<span class="card-tag" style="margin-right:5px">${tag}</span>`).join('');
             
             body.innerHTML = `
                 <div class="tag-container">${tagsHtml}</div>
