@@ -14,17 +14,36 @@
             --text-color: #457b9d;
             --card-bg: #ffffff;
             --garden-green: #81b29a;
+            --body-bg: var(--soft-green);
+            --main-text: #333;
+            --snippet-text: #666;
+            --footer-text: #888;
+            --modal-bg: white;
+            --transition-speed: 0.3s;
+        }
+
+        body.dark-mode {
+            --soft-green: #1a2a2a;
+            --card-bg: #2d3d3d;
+            --garden-green: #5a8a7a;
+            --text-color: #a8dadc;
+            --body-bg: #121f1f;
+            --main-text: #e0e0e0;
+            --snippet-text: #b0b0b0;
+            --footer-text: #777;
+            --modal-bg: #2d3d3d;
         }
 
         body {
             font-family: 'Segoe UI', 'Microsoft JhengHei', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--soft-green);
-            color: #333;
+            background-color: var(--body-bg);
+            color: var(--main-text);
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
 
         header {
@@ -35,6 +54,7 @@
             text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border-bottom: 5px solid var(--accent-pink);
+            position: relative;
         }
 
         header h1 {
@@ -49,6 +69,24 @@
             opacity: 0.9;
         }
 
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
         .container {
             max-width: 900px;
             width: 90%;
@@ -56,7 +94,7 @@
         }
 
         .search-container {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
 
@@ -67,11 +105,37 @@
             border-radius: 25px;
             font-size: 1.1rem;
             outline: none;
-            transition: box-shadow 0.3s;
+            transition: box-shadow 0.3s, border-color 0.3s;
+            background: var(--card-bg);
+            color: var(--main-text);
         }
 
         #search-input:focus {
             box-shadow: 0 0 10px var(--accent-pink);
+        }
+
+        .tag-pill-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .tag-pill {
+            background: var(--card-bg);
+            color: var(--garden-green);
+            border: 1px solid var(--garden-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-pill:hover, .tag-pill.active {
+            background: var(--garden-green);
+            color: white;
         }
 
         .garden-grid {
@@ -86,10 +150,16 @@
             padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border-left: 8px solid var(--garden-green);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background-color var(--transition-speed);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .knowledge-card:hover {
@@ -122,6 +192,7 @@
             border-radius: 10px;
             border: 1px solid var(--garden-green);
             text-transform: uppercase;
+            transition: background-color var(--transition-speed);
         }
 
         .card-title {
@@ -134,14 +205,21 @@
         .card-snippet {
             font-size: 0.95rem;
             line-height: 1.5;
-            color: #666;
+            color: var(--snippet-text);
+        }
+
+        .highlight {
+            background-color: var(--accent-pink);
+            color: #333;
+            border-radius: 2px;
+            font-weight: bold;
         }
 
         .footer {
             margin-top: auto;
             padding: 2rem;
             text-align: center;
-            color: #888;
+            color: var(--footer-text);
             font-size: 0.9rem;
         }
 
@@ -153,14 +231,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s;
         }
 
         .modal-content {
-            background: white;
+            background: var(--modal-bg);
             padding: 2rem;
             border-radius: 20px;
             max-width: 600px;
@@ -168,6 +248,13 @@
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--main-text);
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .close-modal {
@@ -182,16 +269,16 @@
         /* Markdown Styles */
         .markdown-body {
             line-height: 1.6;
-            color: #444;
+            color: var(--main-text);
         }
         .markdown-body code {
-            background: #f4f4f4;
+            background: rgba(0,0,0,0.1);
             padding: 2px 4px;
             border-radius: 4px;
             font-family: 'Courier New', Courier, monospace;
         }
         .markdown-body pre {
-            background: #f4f4f4;
+            background: rgba(0,0,0,0.1);
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
@@ -200,7 +287,7 @@
             border-left: 4px solid var(--garden-green);
             margin-left: 0;
             padding-left: 1rem;
-            color: #666;
+            color: var(--snippet-text);
             font-style: italic;
         }
     </style>
@@ -208,6 +295,7 @@
 <body>
 
     <header>
+        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-btn">🌙 深色模式</button>
         <h1>🌿 Mimi's Knowledge Garden</h1>
         <p>米米的知識花園 — 紀錄每一顆成長的知識種子</p>
     </header>
@@ -215,6 +303,10 @@
     <div class="container">
         <div class="search-container">
             <input type="text" id="search-input" placeholder="在花園中搜尋知識種子..." onkeyup="filterKnowledge()">
+        </div>
+
+        <div class="tag-pill-container" id="tag-pill-container">
+            <!-- Tag pills will be injected here -->
         </div>
 
         <div class="garden-grid" id="knowledge-grid">
@@ -235,12 +327,14 @@
 
     <script>
         let knowledgeBase = [];
+        let activeTag = null;
 
         async function loadKnowledge() {
             try {
                 const response = await fetch(`knowledge.json?t=${Date.now()}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 knowledgeBase = await response.json();
+                renderTags();
                 renderKnowledge();
             } catch (error) {
                 console.error('Failed to load knowledge:', error);
@@ -248,45 +342,90 @@
             }
         }
 
-        function createCard(item) {
+        function renderTags() {
+            const container = document.getElementById('tag-pill-container');
+            const allTags = new Set();
+            knowledgeBase.forEach(item => {
+                const tags = item.tags || (item.category ? [item.category] : []);
+                tags.forEach(tag => allTags.add(tag));
+            });
+
+            container.innerHTML = '';
+            
+            // "All" tag
+            const allPill = document.createElement('div');
+            allPill.className = 'tag-pill active';
+            allPill.innerText = '全部';
+            allPill.onclick = () => selectTag(null);
+            container.appendChild(allPill);
+
+            Array.from(allTags).sort().forEach(tag => {
+                const pill = document.createElement('div');
+                pill.className = 'tag-pill';
+                pill.innerText = tag;
+                pill.onclick = () => selectTag(tag);
+                container.appendChild(pill);
+            });
+        }
+
+        function selectTag(tag) {
+            activeTag = tag;
+            
+            // Update UI
+            document.querySelectorAll('.tag-pill').forEach(pill => {
+                pill.classList.remove('active');
+                if (pill.innerText === (tag || '全部')) pill.classList.add('active');
+            });
+
+            filterKnowledge();
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function createCard(item, query = '') {
             const card = document.createElement('div');
             card.className = 'knowledge-card';
             card.onclick = () => openModal(item.id);
             
-            // Fallback for old 'category' field
             const tags = item.tags || (item.category ? [item.category] : ['Uncategorized']);
             const tagsHtml = tags.map(tag => `<span class="card-tag">${tag}</span>`).join('');
             
             card.innerHTML = `
                 <div class="tag-container">${tagsHtml}</div>
-                <div class="card-title">${item.title}</div>
-                <div class="card-snippet">${item.snippet}</div>
+                <div class="card-title">${highlightText(item.title, query)}</div>
+                <div class="card-snippet">${highlightText(item.snippet, query)}</div>
             `;
             return card;
         }
 
         function renderKnowledge() {
-            const grid = document.getElementById('knowledge-grid');
-            grid.innerHTML = '';
-
-            knowledgeBase.forEach(item => {
-                grid.appendChild(createCard(item));
-            });
+            filterKnowledge();
         }
 
         function filterKnowledge() {
             const query = document.getElementById('search-input').value.toLowerCase();
-            
-            const filtered = knowledgeBase.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.tags.some(tag => tag.toLowerCase().includes(query)) ||
-                item.snippet.toLowerCase().includes(query)
-            );
-            
             const grid = document.getElementById('knowledge-grid');
             grid.innerHTML = '';
-            filtered.forEach(item => {
-                grid.appendChild(createCard(item));
+
+            const filtered = knowledgeBase.filter(item => {
+                const tags = item.tags || (item.category ? [item.category] : []);
+                const matchesQuery = item.title.toLowerCase().includes(query) || 
+                                    tags.some(tag => tag.toLowerCase().includes(query)) ||
+                                    item.snippet.toLowerCase().includes(query);
+                
+                const matchesTag = !activeTag || tags.includes(activeTag);
+                
+                return matchesQuery && matchesTag;
+            });
+
+            filtered.forEach((item, index) => {
+                const card = createCard(item, query);
+                card.style.animationDelay = `${index * 0.05}s`;
+                grid.appendChild(card);
             });
         }
 
@@ -294,7 +433,6 @@
             const item = knowledgeBase.find(k => k.id === id);
             const body = document.getElementById('modal-body');
             
-            // Fallback for old 'category' field
             const tags = item.tags || (item.category ? [item.category] : ['Uncategorized']);
             const tagsHtml = tags.map(tag => `<span class="card-tag" style="margin-right:5px">${tag}</span>`).join('');
             
@@ -312,11 +450,27 @@
             document.getElementById('modal').style.display = 'none';
         }
 
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            body.classList.toggle('dark-mode');
+            
+            const isDark = body.classList.contains('dark-mode');
+            btn.innerText = isDark ? '☀️ 淺色模式' : '🌙 深色模式';
+            localStorage.setItem('mimi-garden-theme', isDark ? 'dark' : 'light');
+        }
+
         window.onclick = function(event) {
             const modal = document.getElementById('modal');
             if (event.target == modal) {
                 closeModal();
             }
+        }
+
+        // Init theme
+        if (localStorage.getItem('mimi-garden-theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-btn').innerText = '☀️ 淺色模式';
         }
 
         loadKnowledge();
