@@ -302,7 +302,7 @@
 
     <div class="container">
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="在花園中搜尋知識種子..." onkeyup="filterKnowledge()">
+            <input type="text" id="search-input" placeholder="在花園中搜尋知識種子..." onkeyup="handleSearch()">
         </div>
 
         <div class="tag-pill-container" id="tag-pill-container">
@@ -328,6 +328,7 @@
     <script>
         let knowledgeBase = [];
         let activeTag = null;
+        let searchTimeout = null;
 
         async function loadKnowledge() {
             try {
@@ -350,28 +351,30 @@
                 tags.forEach(tag => allTags.add(tag));
             });
 
-            container.innerHTML = '';
+            const fragment = document.createDocumentFragment();
             
             // "All" tag
             const allPill = document.createElement('div');
             allPill.className = 'tag-pill active';
             allPill.innerText = '全部';
             allPill.onclick = () => selectTag(null);
-            container.appendChild(allPill);
+            fragment.appendChild(allPill);
 
             Array.from(allTags).sort().forEach(tag => {
                 const pill = document.createElement('div');
                 pill.className = 'tag-pill';
                 pill.innerText = tag;
                 pill.onclick = () => selectTag(tag);
-                container.appendChild(pill);
+                fragment.appendChild(pill);
             });
+
+            container.innerHTML = '';
+            container.appendChild(fragment);
         }
 
         function selectTag(tag) {
             activeTag = tag;
             
-            // Update UI
             document.querySelectorAll('.tag-pill').forEach(pill => {
                 pill.classList.remove('active');
                 if (pill.innerText === (tag || '全部')) pill.classList.add('active');
@@ -409,8 +412,7 @@
         function filterKnowledge() {
             const query = document.getElementById('search-input').value.toLowerCase();
             const grid = document.getElementById('knowledge-grid');
-            grid.innerHTML = '';
-
+            
             const filtered = knowledgeBase.filter(item => {
                 const tags = item.tags || (item.category ? [item.category] : []);
                 const matchesQuery = item.title.toLowerCase().includes(query) || 
@@ -422,11 +424,22 @@
                 return matchesQuery && matchesTag;
             });
 
+            const fragment = document.createDocumentFragment();
             filtered.forEach((item, index) => {
                 const card = createCard(item, query);
                 card.style.animationDelay = `${index * 0.05}s`;
-                grid.appendChild(card);
+                fragment.appendChild(card);
             });
+
+            grid.innerHTML = '';
+            grid.appendChild(fragment);
+        }
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                filterKnowledge();
+            }, 150);
         }
 
         function openModal(id) {
@@ -467,7 +480,6 @@
             }
         }
 
-        // Init theme
         if (localStorage.getItem('mimi-garden-theme') === 'dark') {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-btn').innerText = '☀️ 淺色模式';
