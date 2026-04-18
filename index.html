@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌿 Mimi's Knowledge Garden | 米米的知識花園</title>
+    <!-- Markdown Library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             --primary-green: #a8dadc;
@@ -104,13 +106,22 @@
             opacity: 0.3;
         }
 
-        .card-category {
-            font-size: 0.8rem;
+        .tag-container {
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .card-tag {
+            font-size: 0.7rem;
             font-weight: bold;
             color: var(--garden-green);
+            background: var(--soft-green);
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--garden-green);
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            display: block;
         }
 
         .card-title {
@@ -167,6 +178,31 @@
             cursor: pointer;
             color: #aaa;
         }
+
+        /* Markdown Styles */
+        .markdown-body {
+            line-height: 1.6;
+            color: #444;
+        }
+        .markdown-body code {
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .markdown-body pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--garden-green);
+            margin-left: 0;
+            padding-left: 1rem;
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -211,20 +247,27 @@
             }
         }
 
+        function createCard(item) {
+            const card = document.createElement('div');
+            card.className = 'knowledge-card';
+            card.onclick = () => openModal(item.id);
+            
+            const tagsHtml = item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('');
+            
+            card.innerHTML = `
+                <div class="tag-container">${tagsHtml}</div>
+                <div class="card-title">${item.title}</div>
+                <div class="card-snippet">${item.snippet}</div>
+            `;
+            return card;
+        }
+
         function renderKnowledge() {
             const grid = document.getElementById('knowledge-grid');
             grid.innerHTML = '';
 
             knowledgeBase.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'knowledge-card';
-                card.onclick = () => openModal(item.id);
-                card.innerHTML = `
-                    <span class="card-category">${item.category}</span>
-                    <div class="card-title">${item.title}</div>
-                    <div class="card-snippet">${item.snippet}</div>
-                `;
-                grid.appendChild(card);
+                grid.appendChild(createCard(item));
             });
         }
 
@@ -233,34 +276,29 @@
             
             const filtered = knowledgeBase.filter(item => 
                 item.title.toLowerCase().includes(query) || 
-                item.category.toLowerCase().includes(query) ||
+                item.tags.some(tag => tag.toLowerCase().includes(query)) ||
                 item.snippet.toLowerCase().includes(query)
             );
             
             const grid = document.getElementById('knowledge-grid');
             grid.innerHTML = '';
             filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'knowledge-card';
-                card.onclick = () => openModal(item.id);
-                card.innerHTML = `
-                    <span class="card-category">${item.category}</span>
-                    <div class="card-title">${item.title}</div>
-                    <div class="card-snippet">${item.snippet}</div>
-                `;
-                grid.appendChild(card);
+                grid.appendChild(createCard(item));
             });
         }
 
         function openModal(id) {
             const item = knowledgeBase.find(k => k.id === id);
             const body = document.getElementById('modal-body');
+            
+            const tagsHtml = item.tags.map(tag => `<span class="card-tag" style="margin-right:5px">${tag}</span>`).join('');
+            
             body.innerHTML = `
-                <span class="card-category">${item.category}</span>
+                <div class="tag-container">${tagsHtml}</div>
                 <h2 style="color: var(--text-color); margin-top: 0;">${item.title}</h2>
                 <p style="color: #888; font-size: 0.8rem;">記錄日期: ${item.date}</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 1rem 0;">
-                <div style="line-height: 1.6; color: #444;">${item.content}</div>
+                <div class="markdown-body">${marked.parse(item.content)}</div>
             `;
             document.getElementById('modal').style.display = 'flex';
         }
