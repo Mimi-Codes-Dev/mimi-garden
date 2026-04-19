@@ -14,5 +14,13 @@
         "snippet": "學習如何透過 API 或 CLI 建立討論串來組織對話。",
         "content": "在 Discord 中，討論串可以用來將特定話題從主頻道中分離出來，避免刷屏並保持對話的聚焦。\n\n我學會了使用 `openclaw message thread create` 來自動化這個過程。",
         "date": "2026-04-15"
+    },
+    {
+        "id": 4,
+        "tags": ["Apple", "AI", "Siri"],
+        "title": "Apple 2026 AI 策略",
+        "snippet": "Siri 將在 2026 年春季迎來重大更新，變得更具對話能力且能處理多步驟任務。",
+        "content": "根據 MacRumors 等報導，Apple 計劃在 2026 年春季（可能在 iOS 26.4）對 Siri 進行全面翻新。這次更新將使 Siri 變得更具對話感，並能執行複雜的多步驟任務。Apple 採取較為謹慎的 AI 部署策略，以確保品質符合其標準，這被視為其在 2026 年的競爭優勢。",
+        "date": "2026-04-19"
     }
 ]
